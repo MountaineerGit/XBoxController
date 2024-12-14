@@ -21,31 +21,26 @@ namespace BrandonPotter.XBox
 
         public event ControllerEvent ControllerStateChange;
 
-        private static Dictionary<int, XBoxController> _controllers = null;
-        public static IEnumerable<XBoxController> GetConnectedControllers()
+        private static XBoxController _controller = null;
+        public static XBoxController GetConnectedControllers()
         {
             InitControllers();
 
-            return _controllers.Values.Where(c => c.IsConnected).ToList();
+            return _controller.IsConnected ? _controller : null;
         }
 
-        internal static IEnumerable<XBoxController> GetAllControllers()
+        internal static XBoxController GetController()
         {
             InitControllers();
 
-            return _controllers.Values.ToList();
+            return _controller;
         }
 
         private static void InitControllers()
         {
-            if (_controllers == null)
+            if (_controller == null)
             {
-                _controllers = new Dictionary<int, XBoxController>();
-
-                _controllers[0] = new XBoxController(new SharpDX.XInput.Controller(SharpDX.XInput.UserIndex.One));
-                _controllers[1] = new XBoxController(new SharpDX.XInput.Controller(SharpDX.XInput.UserIndex.Two));
-                _controllers[2] = new XBoxController(new SharpDX.XInput.Controller(SharpDX.XInput.UserIndex.Three));
-                _controllers[3] = new XBoxController(new SharpDX.XInput.Controller(SharpDX.XInput.UserIndex.Four));
+                _controller = new XBoxController(new SharpDX.XInput.Controller(SharpDX.XInput.UserIndex.One));
             }
         }
 
@@ -163,7 +158,8 @@ namespace BrandonPotter.XBox
         public override string ToString()
         {
             int num = this.pIndex + 1;
-            return ("XBox Controller " + num.ToString());
+            //return ("XBox Controller " + num.ToString());
+            return this.lastGamepadState.PacketNumber + ":" + this.lastGamepadState.Gamepad.ToString();
         }
 
         // Properties

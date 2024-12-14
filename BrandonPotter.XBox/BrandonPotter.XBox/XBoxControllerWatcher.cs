@@ -14,6 +14,7 @@ namespace BrandonPotter.XBox
         public event ControllerEvent ControllerStateChange;
 
         Dictionary<int, bool> _connectionStates = new Dictionary<int, bool>();
+        private bool _connection_state = false;
         private bool _stopWatching = false;
         public XBoxControllerWatcher()
         {
@@ -22,7 +23,7 @@ namespace BrandonPotter.XBox
 
         private void WatcherLoop()
         {
-            System.Threading.Thread.Sleep(1000);
+            System.Threading.Thread.Sleep(10);
 
             while (!_stopWatching)
             {
@@ -32,38 +33,38 @@ namespace BrandonPotter.XBox
                 }
                 catch { }
 
-                System.Threading.Thread.Sleep(500);
+                System.Threading.Thread.Sleep(50);
             }
         }
 
         private void DetectStates()
         {
-            var cCons = XBoxController.GetAllControllers();
-            foreach (var xbc in cCons)
+            var xbc = XBoxController.GetController();
+            if(xbc != null)
             {
-                if (!_connectionStates.ContainsKey(xbc.PlayerIndex))
+                if (!_connection_state)
                 {
-                    _connectionStates[xbc.PlayerIndex] = xbc.IsConnected;
+                    _connection_state = xbc.IsConnected;
                     if (xbc.IsConnected)
                     {
                         FireConnected(xbc);
                     }
                 }
 
-                if (_connectionStates[xbc.PlayerIndex] == false && xbc.IsConnected)
+                if (_connection_state == false && xbc.IsConnected)
                 {
-                    _connectionStates[xbc.PlayerIndex] = true;
+                    _connection_state = true;
                     FireConnected(xbc);
                 }
-
-                if (_connectionStates[xbc.PlayerIndex] == true && xbc.IsConnected == false)
+                else if (_connection_state == true && xbc.IsConnected == false)
                 {
-                    _connectionStates[xbc.PlayerIndex] = false;
+                    _connection_state = false;
                     FireDisconnected(xbc);
                 }
 
                 if (xbc.statechange)
                 {
+                    //Console.WriteLine(xbc.ToString());
                     FireStateChange(xbc);
                 }
             }

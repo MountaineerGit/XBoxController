@@ -19,19 +19,21 @@ namespace BrandonPotter.XBox.TestConsole
 
             while (!Console.KeyAvailable)
             {
-                System.Threading.Thread.Sleep(100);
+                System.Threading.Thread.Sleep(5);
             }
         }
 
         private static void Xbcw_ControllerStateChange1(XBoxController controller)
         {
-            foreach (var c in XBoxController.GetConnectedControllers())
+            var c = XBoxController.GetConnectedControllers();
+            if(c != null)
             {
-                Console.WriteLine("Controller " + c.PlayerIndex.ToString() + 
-                    " L(" + c.ThumbLeftX.ToString("0.0") + "," +
-                    c.ThumbLeftY.ToString("0.0") + ")" +
-                    " R(" + c.ThumbRightX.ToString("0.0") + "," +
-                    c.ThumbRightY.ToString("0.0") + ")");
+                Console.WriteLine("({0,6:0.00}:{1,6:0.00}) ({2,6:0.00}:{3,6:0.00}) {4,1} {5,1} {6,1} {7,1}",
+                                  c.ThumbLeftX, c.ThumbLeftY, c.ThumbRightX, c.ThumbRightY,
+                                  c.ButtonAPressed ? 'A' : ' ',
+                                  c.ButtonBPressed ? 'B' : ' ',
+                                  c.ButtonXPressed ? 'X' : ' ',
+                                  c.ButtonYPressed ? 'Y' : ' ');
             }
         }
 
