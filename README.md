@@ -1,4 +1,4 @@
-# XBoxController
+# Fork of XBoxController, to be integrated as CNC controller for ioSender
 .NET library for quickly using XBox Controllers as input devices.
 
 XBox Controllers make awesome input devices for Windows applications. Here's a library to make XBox Controller input simple and trivial, in about 1 minute.
