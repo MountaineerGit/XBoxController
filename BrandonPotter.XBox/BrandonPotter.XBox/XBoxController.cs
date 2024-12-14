@@ -16,6 +16,11 @@ namespace BrandonPotter.XBox
         private long ticksPerMs = TimeSpan.TicksPerMillisecond;
         private bool connected = false;
 
+        public bool statechange = false;
+
+
+        public event ControllerEvent ControllerStateChange;
+
         private static Dictionary<int, XBoxController> _controllers = null;
         public static IEnumerable<XBoxController> GetConnectedControllers()
         {
@@ -101,6 +106,13 @@ namespace BrandonPotter.XBox
             try
             {
                 var state = this.dxC.GetState();
+
+                this.statechange = (this.lastGamepadState.PacketNumber != state.PacketNumber);
+
+                if (this.statechange)
+                    FireStateChange(this);
+
+
                 this.lastGamepadState = state;
                 connected = true;
             } catch (SharpDX.SharpDXException ex)
@@ -110,6 +122,12 @@ namespace BrandonPotter.XBox
                     connected = false;
                 }
             }
+        }
+
+
+        private void FireStateChange(XBoxController xbc)
+        {
+            ControllerStateChange?.Invoke(xbc);
         }
 
         private double RoundToSnap(double value)

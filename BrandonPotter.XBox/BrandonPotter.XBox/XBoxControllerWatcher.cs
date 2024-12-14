@@ -11,6 +11,8 @@ namespace BrandonPotter.XBox
         public event ControllerEvent ControllerConnected;
         public event ControllerEvent ControllerDisconnected;
 
+        public event ControllerEvent ControllerStateChange;
+
         Dictionary<int, bool> _connectionStates = new Dictionary<int, bool>();
         private bool _stopWatching = false;
         public XBoxControllerWatcher()
@@ -59,6 +61,11 @@ namespace BrandonPotter.XBox
                     _connectionStates[xbc.PlayerIndex] = false;
                     FireDisconnected(xbc);
                 }
+
+                if (xbc.statechange)
+                {
+                    FireStateChange(xbc);
+                }
             }
         }
 
@@ -76,6 +83,11 @@ namespace BrandonPotter.XBox
             {
                 ControllerDisconnected(xbc);
             }
+        }
+
+        private void FireStateChange(XBoxController xbc)
+        {
+            ControllerStateChange?.Invoke(xbc);
         }
 
         #region IDisposable Support
